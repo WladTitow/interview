@@ -1,7 +1,8 @@
 <?php
 
 class Desk {
-    private $figures = [];
+    private $figures = [];    
+    protected $isTurnBlack = false;
 
     public function __construct() {
         $this->figures['a'][1] = new Rook(false);
@@ -41,6 +42,14 @@ class Desk {
         $this->figures['h'][8] = new Rook(true);
     }
 
+    public function getColorIsBlack() {
+        return $this->isBlack;
+    }
+    
+    public function nextTurn() {
+        $this->isBlack = !$this->isBlack;
+    } 
+    
     public function move($move) {
         if (!preg_match('/^([a-h])(\d)-([a-h])(\d)$/', $move, $match)) {
             throw new \Exception("Incorrect move");
@@ -52,9 +61,12 @@ class Desk {
         $yTo   = $match[4];
 
         if (isset($this->figures[$xFrom][$yFrom])) {
+            if( $this->figures[$xFrom][$yFrom]->getColorIsBlack() !== $this->getColorIsBlack())
+                  throw new \Exception("Incorrect move color");
             $this->figures[$xTo][$yTo] = $this->figures[$xFrom][$yFrom];
         }
         unset($this->figures[$xFrom][$yFrom]);
+        $this->nextTurn();
     }
 
     public function dump() {
