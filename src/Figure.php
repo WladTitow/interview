@@ -5,6 +5,10 @@ class Figure {
 
     public function __construct($isBlack) {
         $this->isBlack = $isBlack;
+    }   
+    
+    public function getColorIsBlack() {
+        return $this->isBlack;
     }
 
     /** @noinspection PhpToStringReturnInspection */
