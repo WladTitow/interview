@@ -10,6 +10,10 @@ class Figure {
     public function getColorIsBlack() {
         return $this->isBlack;
     }
+    
+    public function checkTurn() {
+        return true;
+    }
 
     /** @noinspection PhpToStringReturnInspection */
     public function __toString() {
