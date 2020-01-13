@@ -10,6 +10,7 @@ class Desk {
         $this->figures['c'][1] = new Bishop(false);
         $this->figures['d'][1] = new Queen(false);
         $this->figures['e'][1] = new King(false);
+
         $this->figures['f'][1] = new Bishop(false);
         $this->figures['g'][1] = new Knight(false);
         $this->figures['h'][1] = new Rook(false);
@@ -59,10 +60,42 @@ class Desk {
         $yFrom = $match[2];
         $xTo   = $match[3];
         $yTo   = $match[4];
+        
+        $colnumber = array('a' => 1, 'b' => 2, 'c' => 3, 'd' => 4, 'e' => 5, 'f' => 6, 'g' => 7, 'h' => 8); 
 
         if (isset($this->figures[$xFrom][$yFrom])) {
-            if( $this->figures[$xFrom][$yFrom]->getColorIsBlack() !== $this->getColorIsBlack())
+            $FigureIsBlack = $this->figures[$xFrom][$yFrom]->getColorIsBlack();
+            if($color !== $this->getColorIsBlack())
                   throw new \Exception("Incorrect move color");
+            if($this->figures[$xFrom][$yFrom] instanceof Pawn) {
+                $deltamove = 1;
+                if($yFrom == 7 and $FigureIsBlack) {
+                    $deltamove = 2;
+                }
+                if($yFrom == 2 and !$FigureIsBlack) {
+                    $deltamove = 2;
+                }
+                if($xFrom !== $xTo) {
+                    if(!isset($this->figures[$xTo][$yTo]))
+                        throw new \Exception("Incorrect diagonal move");
+                    if(abs($colnumber[$xTo] - $colnumber[$xFrom]) > 1)
+                        throw new \Exception("Incorrect big diagonal move");
+                }
+                if($FigureIsBlack and (($yFrom <= $yTo) or (abs($yFrom - $yTo) > $deltamove))) {
+                    throw new \Exception("Incorrect move");
+                }
+                if(!$FigureIsBlack and (($yFrom >= $yTo) or (abs($yFrom - $yTo) > $deltamove))) {
+                    throw new \Exception("Incorrect move");
+                }
+                if($deltamove == 2)
+                    if(abs($colnumber[$xTo] - $colnumber[$xFrom]) == 2) {
+                        if($FigureIsBlack and isset($this->figures[$xFrom][$yFrom-1]))
+                            throw new \Exception("Incorrect move jump");
+                        if(!$FigureIsBlack and isset($this->figures[$xFrom][$yFrom+1]))
+                            throw new \Exception("Incorrect move jump");
+                    }
+      
+            }
             $this->figures[$xTo][$yTo] = $this->figures[$xFrom][$yFrom];
         }
         unset($this->figures[$xFrom][$yFrom]);
